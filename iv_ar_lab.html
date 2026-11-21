@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IV-AR Lab | Simulasi Pemasangan Infus</title>
+<style>
+:root{--navy:#10243a;--teal:#087f83;--mint:#dff4ef;--gold:#f3b64b;--ink:#203040;--muted:#607080;--paper:#f5f8fa;--red:#c84b4b}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,sans-serif}
+header{background:linear-gradient(120deg,#10243a,#087f83);color:white;padding:24px max(5vw,20px)}
+header .tag{letter-spacing:.13em;font-size:.75rem;color:#bcebe4;font-weight:700}h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.1;margin:.4rem 0}header p{max-width:780px;color:#e4f4f2}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px max(5vw,20px);background:#fff;position:sticky;top:0;z-index:5;box-shadow:0 3px 12px #10243a12}
+button,.btn{border:0;border-radius:12px;padding:11px 16px;background:var(--teal);color:white;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+button.secondary,.btn.secondary{background:#e8f0f2;color:var(--navy)}button.warn{background:#9c5a19}button:disabled{opacity:.45;cursor:not-allowed}
+main{max-width:1120px;margin:24px auto;padding:0 18px}.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+.card{background:white;border:1px solid #e4eaee;border-radius:18px;padding:20px;box-shadow:0 8px 26px #17354a0a;margin-bottom:18px}
+h2{color:var(--navy);margin:.1rem 0 .7rem}h3{margin:.2rem 0 .5rem;color:var(--teal)}
+.small{font-size:.9rem;color:var(--muted)}.pill{display:inline-block;background:var(--mint);color:#07585a;border-radius:20px;padding:4px 10px;font-size:.8rem;font-weight:700}
+.scene{min-height:360px;background:radial-gradient(circle at 60% 40%,#f3fbfa,#dce9ee);border-radius:16px;position:relative;overflow:hidden;padding:18px}
+.scene svg{width:100%;height:320px}.step{display:flex;gap:12px;align-items:flex-start;padding:12px;border-bottom:1px solid #edf1f3}.step b{background:var(--mint);color:#07585a;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;flex:none}
+.progress{height:8px;background:#e9eff1;border-radius:9px;overflow:hidden}.progress span{display:block;height:100%;width:0;background:var(--teal);transition:.3s}
+.feedback{padding:12px;border-radius:12px;background:#eef6f6;margin-top:12px;min-height:50px}
+.options{display:grid;gap:8px}.options button{text-align:left;background:#edf3f5;color:var(--ink);border:2px solid transparent}.options button:hover{border-color:var(--teal)}.options button.correct{background:#e0f4e8;border-color:#25945b}.options button.wrong{background:#fff0ed;border-color:#d66a56}
+label{display:block;margin:8px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.camera-wrap{position:relative;min-height:260px;background:#10243a;border-radius:14px;overflow:hidden;color:white;display:grid;place-items:center}
+video{width:100%;height:300px;object-fit:cover}.overlay{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.overlay .arm{width:75%;height:70px;border-radius:50px;background:linear-gradient(90deg,#dcae91,#f0c9ac);transform:rotate(-8deg);box-shadow:inset 0 -12px 15px #986b5833;position:relative}
+.overlay .vein{position:absolute;left:15%;top:45%;width:70%;height:2px;background:#4b8fbd;transform:rotate(2deg);opacity:.8}
+.overlay .cannula{position:absolute;left:52%;top:37%;width:55px;height:8px;background:#dceef6;border:2px solid #5e9ab4;transform:rotate(-10deg);border-radius:8px}
+.vr{background:radial-gradient(circle at center,#274c60,#071522);color:#eaf9f7;min-height:400px;display:grid;place-items:center;text-align:center;border-radius:16px;padding:25px}
+.vr .room{border:1px solid #7eb7b2;border-radius:18px;padding:28px;max-width:650px;box-shadow:0 0 40px #16aaa044}
+footer{text-align:center;padding:24px;color:var(--muted);font-size:.85rem}
+@media(max-width:760px){.grid,.two{grid-template-columns:1fr}nav{position:static}.scene svg{height:260px}}
+</style></head>
+<body>
+<header><div class="tag">SIMULASI KETERAMPILAN KLINIK • MEDIA BELAJAR INTERAKTIF</div>
+<h1>IV-AR Lab</h1><p>Laboratorium virtual pemasangan kateter intravena perifer (PIVC). Amati anatomi, latihan urutan prosedur, kenali risiko kontaminasi, lalu refleksikan keputusan klinis bersama tutor AI.</p>
+<span class="pill">Belajar mandiri • AR camera overlay • VR-style mode • GenAI tutor</span></header>
+<nav><a class="btn secondary" href="#belajar">Modul belajar</a><a class="btn secondary" href="#latihan">Latihan kasus</a><a class="btn secondary" href="#ar">Mode AR</a><a class="btn secondary" href="#vr">Mode VR</a><a class="btn secondary" href="#ai">Tutor GenAI</a></nav>
+<main>
+<section id="belajar" class="grid">
+<div class="card"><h2>01 · Kenali area dan alat</h2><p class="small">Pilih struktur untuk melihat fungsi. Ilustrasi bersifat skematis, bukan panduan menentukan lokasi tusukan pada pasien nyata.</p>
+<div class="scene"><svg viewBox="0 0 600 330" role="img" aria-label="Ilustrasi lengan bawah dan vena perifer">
+<defs><linearGradient id="skin" x2="0" y2="1"><stop stop-color="#f2cdb3"/><stop offset="1" stop-color="#d9a88c"/></linearGradient></defs>
+<path d="M65 175 Q90 110 185 112 L520 140 Q560 160 535 218 L190 240 Q100 248 65 205Z" fill="url(#skin)" stroke="#b57f68" stroke-width="3"/>
+<path d="M120 174 Q230 145 340 180 T500 185" fill="none" stroke="#438db6" stroke-width="8" stroke-linecap="round"/>
+<path d="M170 198 Q260 178 355 203 T480 204" fill="none" stroke="#579dc1" stroke-width="5" stroke-linecap="round"/>
+<circle cx="340" cy="180" r="13" fill="#fff" stroke="#087f83" stroke-width="4"/>
+<path d="M350 168 L425 80" stroke="#087f83" stroke-width="2"/><text x="430" y="75" fill="#10243a" font-size="17" font-weight="bold">Vena (skematis)</text>
+<path d="M175 215 L105 285" stroke="#087f83" stroke-width="2"/><text x="20" y="308" fill="#10243a" font-size="16">Jaringan kulit</text>
+<path d="M490 205 L530 275" stroke="#087f83" stroke-width="2"/><text x="440" y="300" fill="#10243a" font-size="15">Lengan bawah</text>
+</svg></div>
+<div class="two"><button class="secondary" onclick="showPart('vena')">Vena perifer</button><button class="secondary" onclick="showPart('kulit')">Kulit & antisepsis</button></div>
+<div id="partInfo" class="feedback">Pilih struktur pada tombol di atas untuk melihat penjelasan.</div></div>
+<div class="card"><h2>Tujuan pembelajaran</h2><ol><li>Menjelaskan prinsip kebersihan tangan dan teknik aseptik non-touch.</li><li>Mengurutkan persiapan, antisepsis, pemasangan oleh tenaga terlatih, fiksasi, dan dokumentasi.</li><li>Mengidentifikasi tindakan yang meningkatkan risiko kontaminasi.</li><li>Menentukan respons awal terhadap tanda komplikasi dan meminta supervisi.</li></ol><h3>Perlengkapan konsep</h3><p>Kateter sesuai indikasi, torniket, antiseptik kulit, sarung tangan sesuai protokol, kasa/dressing steril, extension set/connector, flush sesuai kebijakan, wadah benda tajam, dan APD sesuai risiko.</p><p class="small">Ikuti SOP institusi, instruksi produsen, asesmen pasien, dan supervisi klinis. Jangan berlatih tindakan invasif pada manusia menggunakan prototipe ini.</p></div>
+</section>
+<section id="latihan" class="card"><h2>02 · Latihan alur prosedur</h2><p>Susun langkah konseptual berikut. Pilih jawaban paling aman pada setiap skenario. Prototipe memberi umpan balik formatif.</p>
+<div class="progress"><span id="prog"></span></div><p id="counter" class="small">Kasus 1 dari 5</p><h3 id="question">Apa tindakan awal sebelum menyiapkan perlengkapan?</h3><div id="choices" class="options"></div><div id="feedback" class="feedback" aria-live="polite">Pilih satu jawaban untuk melihat alasan klinis.</div><div style="display:flex;justify-content:space-between;margin-top:14px"><button class="secondary" onclick="resetQuiz()">Ulangi</button><button id="next" onclick="nextQ()" disabled>Lanjut</button></div></section>
+<section id="ar" class="card"><h2>03 · Mode AR — kamera + overlay anatomi</h2><p class="small">Aktifkan kamera untuk melihat overlay lengan/vena sebagai penanda visual. Mode ini mendemonstrasikan prinsip AR berbasis kamera; overlay tidak melacak anatomi tubuh dan bukan penentu lokasi kanulasi.</p>
+<div class="camera-wrap" id="cameraBox"><span id="cameraMsg">Kamera belum diaktifkan. Gunakan tombol di bawah.</span><video id="cam" autoplay playsinline hidden></video><div class="overlay" id="overlay" hidden><div class="arm"><div class="vein"></div><div class="cannula"></div></div></div></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button onclick="startCamera()">Aktifkan kamera</button><button class="secondary" onclick="stopCamera()">Matikan kamera</button></div>
+<p class="small">Izin kamera hanya diminta setelah tombol ditekan. Kamera memerlukan HTTPS atau localhost; bila tidak tersedia, gunakan ilustrasi anatomi di Modul 01.</p></section>
+<section id="vr" class="card"><h2>04 · Mode VR — ruang latihan imersif</h2><div class="vr" id="vrRoom"><div class="room"><div class="pill">VIRTUAL SKILLS LAB</div><h2 style="color:#eaf9f7">Ruang Praktik IV</h2><p>Bayangkan Anda berada di sisi tempat tidur pasien simulasi. Amati lingkungan, lakukan pemeriksaan keselamatan, komunikasikan tindakan, dan jaga privasi serta kenyamanan pasien.</p><p id="vrPrompt">Pilih skenario: pasien dewasa membutuhkan akses intravena perifer sesuai instruksi klinis.</p><button onclick="nextVR()">Ganti skenario</button> <button class="secondary" onclick="fullscreenVR()">Layar penuh</button></div></div></section>
+<section id="ai" class="card"><h2>05 · Tutor reflektif GenAI</h2><p>Tutor AI membantu menguji alasan, bukan menggantikan dosen, SOP, atau penilaian klinis. Tombol ini membuka ChatGPT dengan prompt pembelajaran yang sudah disiapkan; pengguna dapat mengirimkannya dan berdialog.</p>
+<div class="feedback"><b>Prompt tutor:</b><p id="promptText">Bertindaklah sebagai tutor keperawatan. Bimbing saya memahami pemasangan PIVC dewasa berdasarkan prinsip aseptik non-touch. Ajukan satu pertanyaan pada satu waktu, minta saya menjelaskan alasan, koreksi miskonsepsi dengan merujuk pedoman WHO/CDC, bedakan hal yang bergantung pada SOP, dan jangan memberi instruksi untuk melakukan tindakan invasif tanpa supervisi. Akhiri dengan 3 pertanyaan refleksi.</p></div>
+<button onclick="openTutor()">Buka tutor GenAI di ChatGPT</button> <button class="secondary" onclick="copyPrompt()">Salin prompt</button>
+<p class="small">GenAI dapat menghasilkan kekeliruan. Verifikasi semua jawaban dengan sumber primer dan dosen/pembimbing klinik.</p></section>
+<section class="card"><h2>Evaluasi diri</h2><p>Centang setelah dapat menjelaskan alasannya, bukan sekadar menghafal.</p>
+<label><input type="checkbox"> Saya menjelaskan kapan kebersihan tangan diperlukan.</label><label><input type="checkbox"> Saya memahami prinsip aseptic non-touch technique.</label><label><input type="checkbox"> Saya dapat menyebutkan risiko bila area yang sudah didesinfeksi tersentuh.</label><label><input type="checkbox"> Saya mengetahui kapan harus menghentikan proses dan meminta bantuan pembimbing.</label></section>
+<section class="card"><h2>Referensi inti</h2><ul><li><a href="https://iris.who.int/bitstream/handle/10665/376722/9789240093829-eng.pdf" target="_blank" rel="noopener">WHO (2024) — Guidelines for the prevention of bloodstream infections and other infections associated with the use of intravascular catheters</a></li><li><a href="https://www.cdc.gov/infection-control/hcp/intravascular-catheter-related-infections/summary-recommendations.html" target="_blank" rel="noopener">CDC — Summary of recommendations: intravascular catheter-related infections</a></li></ul></section>
+</main><footer>IV-AR Lab • Prototipe pendidikan • Bukan pengganti pelatihan keterampilan klinis dan SOP fasilitas kesehatan.</footer>
+<script>
+const parts={vena:"Vena perifer membawa darah kembali ke jantung. Pemilihan lokasi dan ukuran kateter harus dilakukan oleh tenaga terlatih berdasarkan kondisi pasien, tujuan terapi, dan kebijakan klinis. Gambar hanya skema anatomi.",kulit:"Antisepsis kulit dilakukan dengan antiseptik yang direkomendasikan dan dibiarkan kering sesuai petunjuk produk. Setelah antisepsis, hindari menyentuh kembali area target; bila tersentuh, perlakukan sebagai terkontaminasi dan ulangi antisepsis sesuai SOP."};
+function showPart(k){document.getElementById('partInfo').textContent=parts[k]}
+const qs=[
+{q:"Sebelum menyiapkan perlengkapan dan menyentuh pasien, apa prinsip awal yang harus dilakukan?",a:["Melakukan kebersihan tangan sesuai indikasi","Langsung memasang torniket","Menyentuh area vena untuk mencari lokasi"],c:0,e:"Kebersihan tangan merupakan langkah penting sebelum kontak pasien dan sebelum prosedur aseptik."},
+{q:"Setelah kulit didesinfeksi, jari menyentuh kembali area insersi. Apa respons aman?",a:["Lanjutkan karena antiseptik sudah digunakan","Anggap area berpotensi terkontaminasi dan ulangi antisepsis sesuai SOP","Tiup area agar cepat kering"],c:1,e:"Sentuhan setelah antisepsis dapat mengkontaminasi area. Jangan melanjutkan seolah area tetap bersih."},
+{q:"Prinsip aseptic non-touch technique terutama berarti…",a:["Tidak menyentuh bagian kritis alat dan area insersi yang telah disiapkan","Menggunakan sarung tangan berarti tangan selalu steril","Boleh menyentuh ujung konektor jika cepat"],c:0,e:"Pertahankan bagian kritis tetap steril/aseptik. Sarung tangan tidak menggantikan kebersihan tangan."},
+{q:"Saat pasien mengeluh nyeri, bengkak, atau kemerahan di lokasi kateter, apa tindakan yang tepat?",a:["Abaikan jika cairan masih menetes","Hentikan/asesmen sesuai protokol, laporkan, dan minta evaluasi klinis","Pijat lokasi insersi"],c:1,e:"Keluhan dan perubahan lokal dapat menandakan komplikasi. Ikuti protokol institusi dan eskalasi ke pembimbing/klinisi."},
+{q:"Setelah prosedur selesai, apa yang harus dipastikan?",a:["Fiksasi/dressing sesuai SOP, kenyamanan pasien, pembuangan benda tajam aman, dan dokumentasi","Meninggalkan alat bekas di meja","Tidak perlu mencatat kondisi lokasi"],c:0,e:"Keselamatan berlanjut setelah insersi: amankan alat tajam, nilai kondisi, edukasi, dan dokumentasikan sesuai kebijakan."}
+];let qi=0,score=0,answered=false;
+function renderQ(){let q=qs[qi];document.getElementById('question').textContent=q.q;document.getElementById('counter').textContent=`Kasus ${qi+1} dari ${qs.length} • Skor ${score}`;document.getElementById('prog').style.width=(qi/qs.length*100)+'%';document.getElementById('feedback').textContent='Pilih satu jawaban untuk melihat alasan klinis.';document.getElementById('next').disabled=true;answered=false;let box=document.getElementById('choices');box.innerHTML='';q.a.forEach((a,i)=>{let b=document.createElement('button');b.textContent=a;b.onclick=()=>answer(i,b);box.appendChild(b)})}
+function answer(i,b){if(answered)return;answered=true;let q=qs[qi];let bs=[...document.querySelectorAll('#choices button')];bs[q.c].classList.add('correct');if(i===q.c)score++;else b.classList.add('wrong');document.getElementById('feedback').textContent=(i===q.c?'Tepat. ':'Belum tepat. ')+q.e;document.getElementById('counter').textContent=`Kasus ${qi+1} dari ${qs.length} • Skor ${score}`;document.getElementById('next').disabled=false;document.getElementById('next').textContent=qi===qs.length-1?'Lihat hasil':'Lanjut'}
+function nextQ(){if(qi<qs.length-1){qi++;renderQ()}else{document.getElementById('question').textContent=`Selesai! Skor ${score}/${qs.length}`;document.getElementById('choices').innerHTML='';document.getElementById('feedback').textContent=score===5?'Sangat baik. Tetap verifikasi dengan SOP dan pembimbing.':'Ulangi bagian yang belum tepat dan jelaskan alasan tiap keputusan.';document.getElementById('next').disabled=true;document.getElementById('prog').style.width='100%'}}
+function resetQuiz(){qi=0;score=0;document.getElementById('next').textContent='Lanjut';renderQ()}renderQ();
+let stream=null;async function startCamera(){try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});let v=document.getElementById('cam');v.srcObject=stream;v.hidden=false;document.getElementById('overlay').hidden=false;document.getElementById('cameraMsg').hidden=true}catch(e){document.getElementById('cameraMsg').hidden=false;document.getElementById('cameraMsg').textContent='Kamera tidak tersedia/izin ditolak. Tetap gunakan ilustrasi anatomi.'}}
+function stopCamera(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;document.getElementById('cam').hidden=true;document.getElementById('overlay').hidden=true;document.getElementById('cameraMsg').hidden=false;document.getElementById('cameraMsg').textContent='Kamera dimatikan.'}
+let vr=0;const vrs=["Skenario A: pasien tampak cemas. Bagaimana Anda menjelaskan tujuan, meminta persetujuan, dan menjaga privasi?","Skenario B: area yang dipilih tampak kemerahan. Apa yang perlu dikaji dan dikomunikasikan kepada pembimbing?","Skenario C: pasien melaporkan rasa tidak nyaman saat infus berjalan. Apa asesmen dan eskalasi yang diperlukan?"];function nextVR(){vr=(vr+1)%vrs.length;document.getElementById('vrPrompt').textContent=vrs[vr]}
+function fullscreenVR(){let e=document.getElementById('vrRoom');if(e.requestFullscreen)e.requestFullscreen()}
+const prompt=document.getElementById('promptText').textContent;
+function openTutor(){window.open('https://chatgpt.com/?q='+encodeURIComponent(prompt),'_blank','noopener')}
+async function copyPrompt(){try{await navigator.clipboard.writeText(prompt);alert('Prompt disalin.')}catch(e){alert('Salin prompt secara manual dari kotak teks.')}} 
+</script></body></html>
