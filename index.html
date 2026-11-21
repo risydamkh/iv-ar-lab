@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IV-AR Lab | Simulasi Pemasangan Infus</title>
+<title>IV-AR Lab v2 | Anatomi 3D dan Audio</title>
 <style>
 :root{--navy:#10243a;--teal:#087f83;--mint:#dff4ef;--gold:#f3b64b;--ink:#203040;--muted:#607080;--paper:#f5f8fa;--red:#c84b4b}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,sans-serif}
@@ -30,12 +30,28 @@ video{width:100%;height:300px;object-fit:cover}.overlay{position:absolute;inset:
 .vr .room{border:1px solid #7eb7b2;border-radius:18px;padding:28px;max-width:650px;box-shadow:0 0 40px #16aaa044}
 footer{text-align:center;padding:24px;color:var(--muted);font-size:.85rem}
 @media(max-width:760px){.grid,.two{grid-template-columns:1fr}nav{position:static}.scene svg{height:260px}}
+
+/* IV-AR Lab v2: educational 3D + narration */
+.viewer3d{position:relative;min-height:380px;border-radius:16px;overflow:hidden;background:radial-gradient(circle at 50% 35%,#f4fbfc,#dce9ef 72%,#cbdce4)}
+#arm3d{width:100%;height:380px;display:block}
+.viewer-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.viewer-note{font-size:.85rem;color:#607080;margin-top:8px}
+.audio-panel{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#eef6f6;padding:14px;border-radius:14px}
+.audio-panel p{margin:3px 0}
+.audio-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.audio-buttons button{min-width:92px}
+.audio-status{font-size:.85rem;color:#526b77;margin-top:8px;min-height:22px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;margin-top:8px}
+.legend span:before{content:"";display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;background:#3689b4}
+.legend span:last-child:before{background:#c77b65}
+@media(max-width:760px){.viewer3d{min-height:300px}#arm3d{height:300px}.audio-panel{grid-template-columns:1fr}}
+
 </style></head>
 <body>
 <header><div class="tag">SIMULASI KETERAMPILAN KLINIK • MEDIA BELAJAR INTERAKTIF</div>
-<h1>IV-AR Lab</h1><p>Laboratorium virtual pemasangan kateter intravena perifer (PIVC). Amati anatomi, latihan urutan prosedur, kenali risiko kontaminasi, lalu refleksikan keputusan klinis bersama tutor AI.</p>
+<h1>IV-AR Lab</h1><p>Laboratorium virtual versi 2 untuk pembelajaran kateter intravena perifer (PIVC), dengan eksplorasi anatomi 3D edukatif dan narasi audio. Amati anatomi, latihan urutan prosedur, kenali risiko kontaminasi, lalu refleksikan keputusan klinis bersama tutor AI.</p>
 <span class="pill">Belajar mandiri • AR camera overlay • VR-style mode • GenAI tutor</span></header>
-<nav><a class="btn secondary" href="#belajar">Modul belajar</a><a class="btn secondary" href="#latihan">Latihan kasus</a><a class="btn secondary" href="#ar">Mode AR</a><a class="btn secondary" href="#vr">Mode VR</a><a class="btn secondary" href="#ai">Tutor GenAI</a></nav>
+<nav><a class="btn secondary" href="#belajar">Modul belajar</a><a class="btn secondary" href="#model3d">Anatomi 3D</a><a class="btn secondary" href="#audio">Audio</a><a class="btn secondary" href="#latihan">Latihan kasus</a><a class="btn secondary" href="#ar">Mode AR</a><a class="btn secondary" href="#vr">Mode VR</a><a class="btn secondary" href="#ai">Tutor GenAI</a></nav>
 <main>
 <section id="belajar" class="grid">
 <div class="card"><h2>01 · Kenali area dan alat</h2><p class="small">Pilih struktur untuk melihat fungsi. Ilustrasi bersifat skematis, bukan panduan menentukan lokasi tusukan pada pasien nyata.</p>
@@ -53,6 +69,45 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:.85rem}
 <div id="partInfo" class="feedback">Pilih struktur pada tombol di atas untuk melihat penjelasan.</div></div>
 <div class="card"><h2>Tujuan pembelajaran</h2><ol><li>Menjelaskan prinsip kebersihan tangan dan teknik aseptik non-touch.</li><li>Mengurutkan persiapan, antisepsis, pemasangan oleh tenaga terlatih, fiksasi, dan dokumentasi.</li><li>Mengidentifikasi tindakan yang meningkatkan risiko kontaminasi.</li><li>Menentukan respons awal terhadap tanda komplikasi dan meminta supervisi.</li></ol><h3>Perlengkapan konsep</h3><p>Kateter sesuai indikasi, torniket, antiseptik kulit, sarung tangan sesuai protokol, kasa/dressing steril, extension set/connector, flush sesuai kebijakan, wadah benda tajam, dan APD sesuai risiko.</p><p class="small">Ikuti SOP institusi, instruksi produsen, asesmen pasien, dan supervisi klinis. Jangan berlatih tindakan invasif pada manusia menggunakan prototipe ini.</p></div>
 </section>
+
+<section id="model3d" class="card">
+<h2>01B · Eksplorasi anatomi lengan 3D</h2>
+<p class="small">Model 3D edukatif skematis. Putar dengan mouse/jari dan gunakan scroll/pinch untuk zoom. Jalur vena hanya ilustrasi pembelajaran, bukan penentu lokasi insersi.</p>
+<div class="viewer3d"><canvas id="arm3d" aria-label="Model 3D skematis lengan bawah dan vena"></canvas></div>
+<div class="viewer-tools">
+<button onclick="reset3DView()">Reset tampilan</button>
+<button class="secondary" onclick="toggleSkin3D()">Tampilkan/sembunyikan kulit</button>
+<button class="secondary" onclick="toggleVeins3D()">Tampilkan/sembunyikan vena</button>
+<button class="secondary" onclick="toggleLabels3D()">Tampilkan/sembunyikan label</button>
+</div>
+<div class="legend"><span>Vena skematis</span><span>Permukaan kulit</span></div>
+<div id="model3dStatus" class="viewer-note" role="status">Memuat model 3D… Jika model tidak muncul, periksa koneksi internet karena pustaka 3D dimuat dari CDN.</div>
+</section>
+<section id="audio" class="card">
+<h2>01C · Audio narasi instruktur</h2>
+<p class="small">Narasi dibacakan oleh suara bahasa Indonesia yang tersedia di browser/perangkat. Kualitas dan pilihan suara dapat berbeda antarperangkat.</p>
+<div class="audio-panel">
+<div>
+<b id="audioTitle">Pengantar pembelajaran IV-AR Lab</b>
+<p class="small">Materi pengantar: tujuan belajar dan batas keselamatan simulasi.</p>
+</div>
+<div class="audio-buttons">
+<button onclick="playNarration()">▶ Putar</button>
+<button class="secondary" onclick="pauseNarration()">Ⅱ Jeda</button>
+<button class="secondary" onclick="stopNarration()">■ Berhenti</button>
+</div>
+</div>
+<div style="margin-top:12px">
+<label for="audioVolume">Volume narasi</label>
+<input id="audioVolume" type="range" min="0" max="1" step="0.1" value="1" style="width:100%" oninput="updateNarrationVolume(this.value)">
+</div>
+<div class="audio-status" id="audioStatus" aria-live="polite">Tekan Putar untuk mendengarkan narasi.</div>
+<div class="viewer-tools">
+<button class="secondary" onclick="playSafetyNarration()">Putar prinsip keselamatan</button>
+<button class="secondary" onclick="playAnatomyNarration()">Putar penjelasan anatomi</button>
+</div>
+</section>
+
 <section id="latihan" class="card"><h2>02 · Latihan alur prosedur</h2><p>Susun langkah konseptual berikut. Pilih jawaban paling aman pada setiap skenario. Prototipe memberi umpan balik formatif.</p>
 <div class="progress"><span id="prog"></span></div><p id="counter" class="small">Kasus 1 dari 5</p><h3 id="question">Apa tindakan awal sebelum menyiapkan perlengkapan?</h3><div id="choices" class="options"></div><div id="feedback" class="feedback" aria-live="polite">Pilih satu jawaban untuk melihat alasan klinis.</div><div style="display:flex;justify-content:space-between;margin-top:14px"><button class="secondary" onclick="resetQuiz()">Ulangi</button><button id="next" onclick="nextQ()" disabled>Lanjut</button></div></section>
 <section id="ar" class="card"><h2>03 · Mode AR — kamera + overlay anatomi</h2><p class="small">Aktifkan kamera untuk melihat overlay lengan/vena sebagai penanda visual. Mode ini mendemonstrasikan prinsip AR berbasis kamera; overlay tidak melacak anatomi tubuh dan bukan penentu lokasi kanulasi.</p>
@@ -67,10 +122,145 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:.85rem}
 <section class="card"><h2>Evaluasi diri</h2><p>Centang setelah dapat menjelaskan alasannya, bukan sekadar menghafal.</p>
 <label><input type="checkbox"> Saya menjelaskan kapan kebersihan tangan diperlukan.</label><label><input type="checkbox"> Saya memahami prinsip aseptic non-touch technique.</label><label><input type="checkbox"> Saya dapat menyebutkan risiko bila area yang sudah didesinfeksi tersentuh.</label><label><input type="checkbox"> Saya mengetahui kapan harus menghentikan proses dan meminta bantuan pembimbing.</label></section>
 <section class="card"><h2>Referensi inti</h2><ul><li><a href="https://iris.who.int/bitstream/handle/10665/376722/9789240093829-eng.pdf" target="_blank" rel="noopener">WHO (2024) — Guidelines for the prevention of bloodstream infections and other infections associated with the use of intravascular catheters</a></li><li><a href="https://www.cdc.gov/infection-control/hcp/intravascular-catheter-related-infections/summary-recommendations.html" target="_blank" rel="noopener">CDC — Summary of recommendations: intravascular catheter-related infections</a></li></ul></section>
-</main><footer>IV-AR Lab • Prototipe pendidikan • Bukan pengganti pelatihan keterampilan klinis dan SOP fasilitas kesehatan.</footer>
+</main><footer>IV-AR Lab v2 • Prototipe pendidikan • Model 3D skematis • Bukan pengganti pelatihan keterampilan klinis dan SOP fasilitas kesehatan.</footer>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+const canvas = document.getElementById('arm3d');
+const status3d = document.getElementById('model3dStatus');
+let renderer, scene, camera, controls, skinGroup, veinGroup, labelGroup;
+let skinVisible = true, veinsVisible = true, labelsVisible = true;
+
+try {
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled = true;
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(35, canvas.clientWidth/canvas.clientHeight, 0.1, 100);
+  camera.position.set(0.2, 1.2, 6.4);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.target.set(0,0,0);
+  controls.minDistance = 3.8;
+  controls.maxDistance = 9;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x718899, 2.0));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2);
+  key.position.set(3,5,6); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xb9e5ee, 1.0);
+  fill.position.set(-4,1,-3); scene.add(fill);
+
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(2.8,64),
+    new THREE.MeshBasicMaterial({color:0xe6f0f3, transparent:true, opacity:.55}));
+  floor.rotation.x = -Math.PI/2; floor.position.y = -1.25; scene.add(floor);
+
+  skinGroup = new THREE.Group(); veinGroup = new THREE.Group(); labelGroup = new THREE.Group();
+  scene.add(skinGroup, veinGroup, labelGroup);
+
+  // Forearm: tapered capsule-like form assembled from smooth overlapping shapes.
+  const skinMat = new THREE.MeshStandardMaterial({color:0xe5b99e, roughness:.72, metalness:0});
+  const upper = new THREE.Mesh(new THREE.CapsuleGeometry(.58, 2.65, 8, 24), skinMat);
+  upper.rotation.z = Math.PI/2; upper.scale.set(1,1,.82); upper.castShadow = true;
+  skinGroup.add(upper);
+  const wrist = new THREE.Mesh(new THREE.SphereGeometry(.43,32,24), skinMat);
+  wrist.position.x = -1.62; wrist.scale.set(1.15,.88,.9); skinGroup.add(wrist);
+  const elbow = new THREE.Mesh(new THREE.SphereGeometry(.58,32,24), skinMat);
+  elbow.position.x = 1.55; elbow.scale.set(1.15,.92,.9); skinGroup.add(elbow);
+
+  // Schematic superficial venous paths, intentionally not anatomical guidance.
+  const blueMat = new THREE.MeshStandardMaterial({color:0x267ca8, roughness:.38, metalness:.05});
+  function tube(points, radius=.045) {
+    const curve = new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
+    const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve,64,radius,10,false), blueMat);
+    veinGroup.add(mesh);
+  }
+  tube([[-2.0,.06,.42],[-1.3,.18,.48],[-.6,.08,.50],[.15,.18,.48],[.85,.1,.42],[1.65,.05,.25]],.055);
+  tube([[-.95,.12,.47],[-.65,.52,.34],[-.1,.62,.28],[.35,.42,.38]],.035);
+  tube([[.15,.18,.48],[.55,-.28,.39],[1.1,-.42,.31],[1.6,-.25,.23]],.035);
+
+  // Small educational label markers.
+  function marker(text, pos) {
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(.07,16,12),
+      new THREE.MeshBasicMaterial({color:0x087f83}));
+    dot.position.set(...pos); labelGroup.add(dot);
+    const canvas2 = document.createElement('canvas');
+    canvas2.width=512; canvas2.height=128;
+    const ctx=canvas2.getContext('2d');
+    ctx.fillStyle='#10243a'; ctx.font='bold 38px system-ui'; ctx.fillText(text,12,78);
+    const tex=new THREE.CanvasTexture(canvas2);
+    const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true}));
+    sprite.position.set(pos[0]+.55,pos[1]+.35,pos[2]); sprite.scale.set(1.65,.42,1);
+    labelGroup.add(sprite);
+  }
+  marker('Vena (skematis)',[.15,.2,.56]);
+  marker('Lengan bawah',[-1.3,-.55,.4]);
+
+  function resize3d(){
+    const w=canvas.clientWidth, h=canvas.clientHeight;
+    if(!w||!h) return;
+    renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize',resize3d);
+  function animate(){requestAnimationFrame(animate); controls.update(); renderer.render(scene,camera);}
+  animate();
+  status3d.textContent='Model 3D siap. Seret untuk memutar; scroll atau pinch untuk memperbesar.';
+  window.reset3DView=()=>{camera.position.set(.2,1.2,6.4);controls.target.set(0,0,0);controls.update();};
+  window.toggleSkin3D=()=>{skinVisible=!skinVisible;skinGroup.visible=skinVisible;};
+  window.toggleVeins3D=()=>{veinsVisible=!veinsVisible;veinGroup.visible=veinsVisible;};
+  window.toggleLabels3D=()=>{labelsVisible=!labelsVisible;labelGroup.visible=labelsVisible;};
+} catch(err) {
+  status3d.textContent='Model 3D tidak dapat dimuat pada browser ini. Gunakan modul anatomi skematis dan coba browser yang mendukung WebGL.';
+  console.error(err);
+}
+</script>
+
 <script>
 const parts={vena:"Vena perifer membawa darah kembali ke jantung. Pemilihan lokasi dan ukuran kateter harus dilakukan oleh tenaga terlatih berdasarkan kondisi pasien, tujuan terapi, dan kebijakan klinis. Gambar hanya skema anatomi.",kulit:"Antisepsis kulit dilakukan dengan antiseptik yang direkomendasikan dan dibiarkan kering sesuai petunjuk produk. Setelah antisepsis, hindari menyentuh kembali area target; bila tersentuh, perlakukan sebagai terkontaminasi dan ulangi antisepsis sesuai SOP."};
-function showPart(k){document.getElementById('partInfo').textContent=parts[k]}
+function showPart(k){document.getElementById('partInfo').textContent=parts[k];playUiTone('click')}
+
+const narrationTexts = {
+  intro: "Selamat datang di IV AR Lab. Media ini membantu Anda mempelajari konsep anatomi lengan, prinsip keselamatan pasien, kebersihan tangan, dan teknik aseptik non touch. Simulasi ini hanya media pembelajaran. Simulasi tidak menggantikan demonstrasi dosen, praktik pada manekin, standar operasional prosedur, atau supervisi klinis.",
+  safety: "Sebelum prosedur klinis, tenaga terlatih perlu melakukan kebersihan tangan sesuai indikasi, memverifikasi identitas pasien, menjelaskan tindakan, memperoleh persetujuan, menjaga privasi, dan mempertahankan prinsip aseptik. Bila ada keraguan atau kondisi tidak aman, hentikan dan minta bantuan pembimbing.",
+  anatomy: "Perhatikan model lengan tiga dimensi. Garis biru menggambarkan jalur vena secara skematis untuk membantu memahami hubungan ruang. Bentuk dan posisi pada model bukan peta anatomi individual dan tidak boleh digunakan untuk memilih lokasi pemasangan kateter pada pasien."
+};
+let narrationVolume = 1;
+function speakText(text, title){
+  if(!('speechSynthesis' in window)){document.getElementById('audioStatus').textContent='Fitur narasi suara tidak didukung browser ini.';return;}
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='id-ID'; u.rate=.92; u.pitch=1; u.volume=narrationVolume;
+  const voices=window.speechSynthesis.getVoices();
+  const idVoice=voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('id'));
+  if(idVoice) u.voice=idVoice;
+  u.onstart=()=>document.getElementById('audioStatus').textContent='Sedang memutar: '+title;
+  u.onend=()=>document.getElementById('audioStatus').textContent='Narasi selesai.';
+  u.onerror=()=>document.getElementById('audioStatus').textContent='Narasi tidak dapat diputar. Periksa dukungan suara pada perangkat.';
+  document.getElementById('audioTitle').textContent=title;
+  window.speechSynthesis.speak(u);
+}
+function playNarration(){speakText(narrationTexts.intro,'Pengantar pembelajaran IV-AR Lab');}
+function playSafetyNarration(){speakText(narrationTexts.safety,'Prinsip keselamatan pasien');}
+function playAnatomyNarration(){speakText(narrationTexts.anatomy,'Penjelasan anatomi 3D');}
+function pauseNarration(){if('speechSynthesis' in window){window.speechSynthesis.pause();document.getElementById('audioStatus').textContent='Narasi dijeda.';}}
+function stopNarration(){if('speechSynthesis' in window){window.speechSynthesis.cancel();document.getElementById('audioStatus').textContent='Narasi dihentikan.';}}
+function updateNarrationVolume(v){narrationVolume=Number(v);}
+let audioCtx=null;
+function playUiTone(kind='click'){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    audioCtx=audioCtx||new AC();
+    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+    osc.type='sine';osc.frequency.value=kind==='success'?740:(kind==='error'?220:520);
+    gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.075,audioCtx.currentTime+.015);
+    gain.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.16);
+    osc.connect(gain);gain.connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+.17);
+  }catch(e){}
+}
+
 const qs=[
 {q:"Sebelum menyiapkan perlengkapan dan menyentuh pasien, apa prinsip awal yang harus dilakukan?",a:["Melakukan kebersihan tangan sesuai indikasi","Langsung memasang torniket","Menyentuh area vena untuk mencari lokasi"],c:0,e:"Kebersihan tangan merupakan langkah penting sebelum kontak pasien dan sebelum prosedur aseptik."},
 {q:"Setelah kulit didesinfeksi, jari menyentuh kembali area insersi. Apa respons aman?",a:["Lanjutkan karena antiseptik sudah digunakan","Anggap area berpotensi terkontaminasi dan ulangi antisepsis sesuai SOP","Tiup area agar cepat kering"],c:1,e:"Sentuhan setelah antisepsis dapat mengkontaminasi area. Jangan melanjutkan seolah area tetap bersih."},
@@ -79,8 +269,8 @@ const qs=[
 {q:"Setelah prosedur selesai, apa yang harus dipastikan?",a:["Fiksasi/dressing sesuai SOP, kenyamanan pasien, pembuangan benda tajam aman, dan dokumentasi","Meninggalkan alat bekas di meja","Tidak perlu mencatat kondisi lokasi"],c:0,e:"Keselamatan berlanjut setelah insersi: amankan alat tajam, nilai kondisi, edukasi, dan dokumentasikan sesuai kebijakan."}
 ];let qi=0,score=0,answered=false;
 function renderQ(){let q=qs[qi];document.getElementById('question').textContent=q.q;document.getElementById('counter').textContent=`Kasus ${qi+1} dari ${qs.length} • Skor ${score}`;document.getElementById('prog').style.width=(qi/qs.length*100)+'%';document.getElementById('feedback').textContent='Pilih satu jawaban untuk melihat alasan klinis.';document.getElementById('next').disabled=true;answered=false;let box=document.getElementById('choices');box.innerHTML='';q.a.forEach((a,i)=>{let b=document.createElement('button');b.textContent=a;b.onclick=()=>answer(i,b);box.appendChild(b)})}
-function answer(i,b){if(answered)return;answered=true;let q=qs[qi];let bs=[...document.querySelectorAll('#choices button')];bs[q.c].classList.add('correct');if(i===q.c)score++;else b.classList.add('wrong');document.getElementById('feedback').textContent=(i===q.c?'Tepat. ':'Belum tepat. ')+q.e;document.getElementById('counter').textContent=`Kasus ${qi+1} dari ${qs.length} • Skor ${score}`;document.getElementById('next').disabled=false;document.getElementById('next').textContent=qi===qs.length-1?'Lihat hasil':'Lanjut'}
-function nextQ(){if(qi<qs.length-1){qi++;renderQ()}else{document.getElementById('question').textContent=`Selesai! Skor ${score}/${qs.length}`;document.getElementById('choices').innerHTML='';document.getElementById('feedback').textContent=score===5?'Sangat baik. Tetap verifikasi dengan SOP dan pembimbing.':'Ulangi bagian yang belum tepat dan jelaskan alasan tiap keputusan.';document.getElementById('next').disabled=true;document.getElementById('prog').style.width='100%'}}
+function answer(i,b){if(answered)return;answered=true;let q=qs[qi];let bs=[...document.querySelectorAll('#choices button')];bs[q.c].classList.add('correct');if(i===q.c){score++;playUiTone('success')}else{b.classList.add('wrong');playUiTone('error')}document.getElementById('feedback').textContent=(i===q.c?'Tepat. ':'Belum tepat. ')+q.e;document.getElementById('counter').textContent=`Kasus ${qi+1} dari ${qs.length} • Skor ${score}`;document.getElementById('next').disabled=false;document.getElementById('next').textContent=qi===qs.length-1?'Lihat hasil':'Lanjut'}
+function nextQ(){if(qi<qs.length-1){qi++;renderQ()}else{playUiTone('success');document.getElementById('question').textContent=`Selesai! Skor ${score}/${qs.length}`;document.getElementById('choices').innerHTML='';document.getElementById('feedback').textContent=score===5?'Sangat baik. Tetap verifikasi dengan SOP dan pembimbing.':'Ulangi bagian yang belum tepat dan jelaskan alasan tiap keputusan.';document.getElementById('next').disabled=true;document.getElementById('prog').style.width='100%'}}
 function resetQuiz(){qi=0;score=0;document.getElementById('next').textContent='Lanjut';renderQ()}renderQ();
 let stream=null;async function startCamera(){try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});let v=document.getElementById('cam');v.srcObject=stream;v.hidden=false;document.getElementById('overlay').hidden=false;document.getElementById('cameraMsg').hidden=true}catch(e){document.getElementById('cameraMsg').hidden=false;document.getElementById('cameraMsg').textContent='Kamera tidak tersedia/izin ditolak. Tetap gunakan ilustrasi anatomi.'}}
 function stopCamera(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;document.getElementById('cam').hidden=true;document.getElementById('overlay').hidden=true;document.getElementById('cameraMsg').hidden=false;document.getElementById('cameraMsg').textContent='Kamera dimatikan.'}
